@@ -39,6 +39,13 @@ export default function Portfolio() {
             tech: ['Vue.js', 'Python', 'PostgreSQL', 'Redis', 'Google Analytics API'],
             image: '/metapic-demo.mp4',
             link: 'https://metapic.com/'
+        },
+        {
+            title: 'the palm - very popular restaurant',
+            description: 'Advanced marketing analytics platform providing deep insights into campaign performance, audience behavior, and ROI optimization for digital marketers.',
+            tech: ['Vue.js', 'Python', 'PostgreSQL', 'Redis', 'Google Analytics API'],
+            image: '/thepalm-demo.mp4',
+            link: 'https://www.thepalm.com/'
         }
     ];
 
