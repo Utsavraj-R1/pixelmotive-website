@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import InteractiveBackground from "@/components/InteractiveBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,21 +14,34 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pixelmotive - Solo Web Development Agency",
-  description: "Professional web development services by Pixelmotive. Custom websites, UI/UX design, and digital solutions for businesses.",
+  title: "Pixelmotive",
+  description: "Pixelmotive — Web Development Agency",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ background: "transparent" }}
       >
-        {children}
+        {/* Cursor splash background (always behind) */}
+        <InteractiveBackground />
+
+        {/* Site content (always above background) */}
+        <main
+          style={{
+            position: "relative",
+            zIndex: 10,
+            minHeight: "100vh",
+          }}
+        >
+          {children}
+        </main>
       </body>
     </html>
   );

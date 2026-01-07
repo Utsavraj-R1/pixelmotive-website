@@ -1,52 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server';
-import sgMail from '@sendgrid/mail';
+import nodemailer from "nodemailer";
+import { NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
     try {
-        const { name, email, phone, message } = await request.json();
+        const { name, email, phone, message } = await req.json();
 
-        // Validate input
-        if (!name || !email || !message) {
-            return NextResponse.json(
-                { error: 'Name, email, and message are required' },
-                { status: 400 }
-            );
-        }
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
 
-        // Set SendGrid API key
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
-
-        // Email options
-        const msg = {
-            to: 'pixlemotive@gmail.com',
-            from: 'noreply@pixelmotive.com', // Use a verified sender in SendGrid
-            subject: `New Contact Form Submission from ${name}`,
+        await transporter.sendMail({
+            from: `"Pixelmotive Contact" <${process.env.EMAIL_USER}>`,
+            to: "pixlemotive@gmail.com",
+            subject: "New Contact Form Submission",
             html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #7c3aed;">New Contact Form Submission</h2>
-          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
-            <p><strong>Message:</strong></p>
-            <p style="white-space: pre-wrap;">${message}</p>
-          </div>
-          <p style="color: #666; font-size: 14px;">
-            This message was sent from the Pixelmotive website contact form.
-          </p>
-        </div>
+        <h3>New Contact Message</h3>
+        <p><b>Name:</b> ${name}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Phone:</b> ${phone || "Not provided"}</p>
+        <p><b>Message:</b><br/>${message}</p>
       `,
-        };
-
-        // Send email
-        await sgMail.send(msg);
+        });
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error('Email sending error:', error);
-        return NextResponse.json(
-            { error: 'Failed to send email' },
-            { status: 500 }
-        );
+        console.error("CONTACT ERROR:", error);
+        return NextResponse.json({ success: false }, { status: 500 });
     }
 }
